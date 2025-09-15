@@ -1,0 +1,114 @@
+﻿@model List<EasyGames.Models.StockItem>
+@using EasyGames.Models
+
+@{
+    ViewData["Title"] = "Catalog";
+    
+    // Categories list passed from controller
+    var cats = ViewBag.Categories as List<Category> ?? new List<Category>();
+    
+    // Currently selected category
+    int? selectedId = ViewBag.SelectedCategoryId as int?;
+   
+    // Current search query
+    string q = Convert.ToString(Context.Request.Query["q"]);
+}
+
+<h2 class="mb-3">Catalog</h2>
+
+<p class="text-muted small">Select a category or type a keyword, then click <b>Filter</b> to refine results.</p>
+
+
+<!-- Filter form: category dropdown + search box -->
+<form method="get" class="row g-2 mb-4">
+    
+    <div class="col-auto">
+        <select name="categoryId" class="form-select" style="min-width:220px;">
+            
+            <option value="">All Categories</option>
+            
+            @foreach (var c in cats)
+            {
+                <!-- Marks the current category as selected -->
+                <option value="@c.Id" selected="@(selectedId == c.Id ? "selected" : null)">@c.Name</option>
+            }
+
+        </select>
+    </div>
+
+
+    <div class="col-auto">
+        <!-- Search box -->
+        <input class="form-control" name="q" value="@q" placeholder="Search..." style="min-width:280px;" />
+    </div>
+
+
+    <div class="col-auto">
+        <!-- Submit filter -->
+        <button class="btn btn-primary" type="submit">Filter</button>
+    </div>
+</form>
+
+<!-- In case of no results found -->
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">No items match your filter.</div>
+}
+else
+{
+    <!-- Displays items in grid -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                    {
+                        <img src="@item.ImageUrl" alt="@item.Title"
+                             class="card-img-top" style="height:200px;object-fit:cover;" />
+                    }
+
+                    <div class="card-body d-flex flex-column">
+                       
+                        <!-- Title and Category -->
+                        <h5 class="card-title mb-1">@item.Title</h5>
+                        <div class="small text-muted mb-2">@item.Category?.Name</div>
+
+                        <!-- Short description -->
+                        <p class="card-text text-muted flex-grow-1">
+                            @((item.Description?.Length ?? 0) > 100
+                                ? item.Description!.Substring(0, 100) + "…"
+                                : item.Description)
+                        </p>
+
+                        <!-- Price -->
+                        <div class="fw-semibold mb-2">@item.Price.ToString("C")</div>
+
+                        <!-- Stock info and Add to Cart / Login -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge @(item.Quantity <= 5 ? "text-bg-danger" : "text-bg-secondary")">
+                                In stock: @item.Quantity
+                            </span>
+
+                            <!-- Add to cart (only if logged in as User) -->
+                            @if (User?.IsInRole("User") == true)
+                            {
+                                <form asp-controller="Cart" asp-action="Add" method="post" class="m-0 d-flex gap-2">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input class="form-control" type="number" name="qty" value="1" min="1" max="@item.Quantity" />
+                                    <button class="btn btn-primary btn-sm" type="submit">Add</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <!-- If not logged in, redirect to login -->
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-sm">Add to Cart</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

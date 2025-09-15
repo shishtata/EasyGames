@@ -1,0 +1,85 @@
+﻿@* This View expects a StockItem model to bind form fields*@
+@model EasyGames.Models.StockItem
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>StockItem</h4>
+<hr />
+
+<div class="row">
+
+    <div class="col-md-4">
+
+        @* Form that POSTs to StockItemsController.Create method*@
+        <form asp-action="Create">
+            
+            @* Anti-forgery token for security*@
+            <div asp-validation-summary="ModelOnly" class="text-danger">
+            </div>
+
+            @* Title field *@
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            @* Description field *@
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            @* Price field *@
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            @* Quantity field *@
+            <div class="form-group">
+                <label asp-for="Quantity" class="control-label"></label>
+                <input asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+
+            @* ImageURL Field *@
+            <div class="form-group">
+                <label asp-for="ImageUrl" class="control-label"></label>
+                <input asp-for="ImageUrl" class="form-control" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            </div>
+
+            @* CDropdown created for categories *@
+            <div class="mb-3">
+                <label asp-for="CategoryId" class="form-label"></label>
+                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
+            @* Submit button *@
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+
+
+        </form>
+    </div>
+</div>
+
+@* Takes you back to Stock List *@
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+@section Scripts {
+    @* Client-end Validation Script *@
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

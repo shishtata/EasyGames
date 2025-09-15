@@ -1,0 +1,90 @@
+﻿@* This view expects a list of StockItems*@
+@model IEnumerable<EasyGames.Models.StockItem>
+
+@{
+    ViewData["Title"] = "Stock Items";
+}
+
+<h1 class="mb-3">Stock Items</h1>
+
+@* Button to add new item *@
+<div class="d-flex gap-2 mb-3">
+    <a asp-action="Create" class="btn btn-primary">+ Create New</a>
+</div>
+
+@* Creating a responsive table for all screens *@
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        
+        <thead>
+            <tr>
+                <th style="width:80px;">Image</th>
+                
+                @* We add the Column header based on StockItem Propoerties *@
+                <th>@Html.DisplayNameFor(m => m.First().Title)</th>
+                <th>@Html.DisplayNameFor(m => m.First().Description)</th>
+                <th>@Html.DisplayNameFor(m => m.First().Price)</th>
+                <th>@Html.DisplayNameFor(m => m.First().Quantity)</th>
+                <th>Category</th>
+                <th style="width:200px;"></th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @* Loops through each stock item to create table *@
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @* This shows the image of the item if present, otherwise shows blank *@
+                        @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" alt="@item.Title"
+                                 class="img-thumbnail"
+                                 style="width:60px;height:60px;object-fit:cover;" />
+                        }
+                    </td>
+
+                    @* General Desciption of the Item *@
+                    <td>@item.Title</td>
+                    <td class="text-muted">
+                        @* If the description is more than 60 characters, it cuts to 60 characters with ... *@
+                        @((item.Description?.Length ?? 0) > 60 
+                                            ? item.Description!.Substring(0, 60) + "…"
+                                            : item.Description)
+                    </td>
+
+                    @* HIghlights low stock <=5 in Red *@
+                    <td>@item.Price.ToString("C")</td>
+                    <td class="@(item.Quantity <= 5 ? "text-danger fw-semibold" : "")">
+                        @item.Quantity
+                    </td>
+
+                    @* Category name *@
+                    <td>@item.Category?.Name</td>
+
+                    @* Buttons for Edit, Details, Delete *@
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a asp-action="Edit"
+                               asp-route-id="@item.Id"
+                               class="btn btn-primary">Edit</a>
+                            <a asp-action="Details"
+                               asp-route-id="@item.Id"
+                               class="btn btn-outline-secondary">Details</a>
+                            <a asp-action="Delete"
+                               asp-route-id="@item.Id"
+                               class="btn btn-danger">Delete</a>
+                        </div>
+                    </td>
+
+                </tr>
+                        }
+        </tbody>
+    </table>
+</div>
+
+@* Takes you back to Admin Dashboard *@
+<a asp-controller="Home" asp-action="Admin"
+   class="btn btn-outline-secondary mt-3">Back to Dashboard</a>

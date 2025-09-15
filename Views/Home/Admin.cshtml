@@ -1,0 +1,105 @@
+﻿@model EasyGames.Models.AdminDashboard
+@{
+    ViewData["Title"] = "Admin";
+}
+
+<h2 class="mb-3">Admin dashboard</h2>
+
+<!-- Summary cards showing counts -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            
+            <div class="card-body">
+                <div class="h6 text-muted mb-1">Users</div>
+                <div class="display-6">@Model.TotalUsers</div>
+                <!-- Link to manage user -->
+                <a asp-controller="Users" asp-action="Index" class="btn btn-sm btn-primary mt-3">Manage users</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Categories summary -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="h6 text-muted mb-1">Categories</div>
+                <div class="display-6">@Model.TotalCategories</div>
+                <a asp-controller="StockItems" asp-action="Index" class="btn btn-sm btn-primary mt-3">Manage stock</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Summary -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="h6 text-muted mb-1">Stock Items</div>
+                <div class="display-6">@Model.TotalStockItems</div>
+                <a asp-controller="StockItems" asp-action="Create" class="btn btn-sm btn-primary mt-3">Add item</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscriber summary -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="h6 text-muted mb-1">Subscribers</div>
+                <div class="display-6">@Model.TotalSubscribers</div>
+                <a asp-controller="Subscribers" asp-action="Index" class="btn btn-sm btn-primary mt-3">
+                    View Subscribers
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Low stock alerts -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        
+        <h3 class="card-title">Low stock (≤ @Model.LowStockThreshold)</h3>
+        
+        <!-- Conditional for Stock Count, message for stock above low stock level, and action for low stock -->
+        @if (Model.LowStock.Count == 0)
+        {
+            <p class="text-muted mb-0">All good — no items below threshold.</p>
+        }
+        
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in Model.LowStock)
+                        {
+                            <tr>
+                                <td>@x.Title</td>
+                                <td>@x.Category?.Name</td>
+                                <td>@x.Quantity</td>
+                                <td>$@x.Price</td>
+                                <td>
+                                    <!-- Link to edit stock directly -->
+                                    <a asp-controller="StockItems" asp-action="Edit" asp-route-id="@x.Id"
+                                       class="btn btn-sm btn-outline-primary">Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

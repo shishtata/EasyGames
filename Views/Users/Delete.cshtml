@@ -1,0 +1,20 @@
+﻿@* This view expects one single Users object*@
+@model EasyGames.Models.Users
+
+<h2>Delete User</h2>
+
+<p>
+    @* Shows which email is selected to be deleted*@
+    Are you sure you want to delete @Model.Email?
+</p>
+
+<form asp-action="Delete" method="post">
+    @* HIdden field of User's ID passed back to controller*@
+    <input type="hidden" asp-for="Id" />
+
+    @* When clicked to delete, will POST to UserController.Delete*@
+    <button class="btn btn-danger">Delete</button>
+
+    @* Takes back to INdex page if cancel delete*@
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

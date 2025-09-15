@@ -1,0 +1,27 @@
+﻿@* This view expects User Objects to be passed from controller*@
+@model IEnumerable<EasyGames.Models.Users>
+
+<h2>All Users</h2>
+<table class="table table-striped">
+    
+    <thead>
+        <tr><th>Email</th>
+            <th>Full Name</th>
+            <th></th></tr>
+    </thead>
+
+    <tbody>
+
+        @* Here we loop through each user in the model to create a table row*@
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Email</td>
+                <td>@u.FullName</td>
+                
+                @* This is the Delete link which calls UserController.Delete id if clicked*@
+                <td><a asp-action="Delete" asp-route-id="@u.Id" class="btn btn-sm btn-outline-danger">Delete</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

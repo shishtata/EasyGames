@@ -1,0 +1,26 @@
+﻿@* This view receives list of Subscribers from controller*@
+@model IEnumerable<EasyGames.Models.Subscribers>
+
+<h2>Subscribers</h2>
+
+<table class="table table-striped">
+    
+    <thead>
+        <tr>
+            <th>Email</th>
+        </tr>
+    </thead>
+
+
+    <tbody>
+
+        @* Loops through each subscriber in the model to create a table row *@
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.Email</td>
+            </tr>
+        }
+    </tbody>
+
+</table>

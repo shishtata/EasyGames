@@ -1,0 +1,78 @@
+﻿@using EasyGames.ViewModels;
+@model LoginViewModel;
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<!-- Show success message if user just registered or reset password -->
+@if (TempData["Msg"] is string ok)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @ok <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="account-container">
+    <div class="account-box">
+        <h2 class="text-center mb-4">Login</h2>
+
+        <!-- Form posts back to AccountController.Login -->
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken() <!-- Prevents CSRF attacks -->
+            
+            <!-- Login form posts to AccountController.Login -->
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <!-- Email -->
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <!-- Forgot Password Link -->
+            <div class="float-end">
+                <a asp-controller="Account" asp-action="VerifyEmail" class="text-decoration-none">
+                    Forgot password?
+                </a>
+            </div>
+
+            <!-- Remember Me Checkbox -->
+            <div class="form-check mb-3">
+                <label class="form-check-label">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    @Html.DisplayNameFor(a => a.RememberMe)
+                </label>
+            </div>
+
+            <!-- Login button -->
+            <input type="submit" value="Login" class="btn btn-success w-100 p-2" />
+
+            <!-- Redirects you to register if you don't have an account -->
+            <p class="text-center mt-2">
+                Don't have an account? <a asp-controller="Account" asp-action="Register" class="text-decoration-none">Register</a>
+            </p>
+
+            <div class="text-center">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3">Back</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        // Validation scripts to check the form before sending to the server                                        
+        await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
+    }
+}

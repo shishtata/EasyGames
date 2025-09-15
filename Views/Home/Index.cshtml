@@ -1,0 +1,146 @@
+﻿@model EasyGames.Models.HomeViewModel
+@{
+    ViewData["Title"] = "Welcome";
+}
+
+@* Success and Error alerts *@
+@if (TempData["Msg"] is string ok)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @ok <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Err"] is string err)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @err <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Welcome section -->
+<div class="p-5 mb-4 rounded-3" style="background:linear-gradient(135deg,#e9f7ef,#f8fff9);">
+    <div class="container-fluid py-3">
+        <h1 class="display-5 fw-bold mb-2">Welcome to EasyGames</h1>
+        
+        <p class="col-md-8 fs-5 text-muted">
+            Books, games & toys — browse new and trending, add to cart, and check out.
+        </p>
+
+        <!-- Call-to-action button -->
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <a asp-controller="Catalog" asp-action="Index" class="btn btn-primary btn-lg">Browse Catalog</a>
+
+        </div>
+
+        <!-- Subscriber form -->
+        <form asp-action="Subscribe" method="post" class="d-flex gap-2" style="max-width:520px;">
+            <input class="form-control form-control-lg" name="email" type="email" placeholder="Your email to get offers…" />
+            <button class="btn btn-primary btn-lg" type="submit">Subscribe</button>
+        </form>
+    </div>
+</div>
+
+
+<!-- What's New section -->
+@if (Model.WhatsNew.Any())
+{
+    <div class="mb-3 d-flex align-items-center justify-content-between">
+        <h4 class="m-0">What’s New</h4>
+        <a asp-controller="Catalog" asp-action="Index" class="btn btn-link">See all →</a>
+    </div>
+
+    <!-- Shows max 4 items -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+        @foreach (var b in Model.WhatsNew.Take(4))
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrWhiteSpace(b.ImageUrl))
+                    {
+                        <img src="@b.ImageUrl" alt="@b.Title" class="card-img-top" style="height:180px;object-fit:cover;" />
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title mb-1">@b.Title</h6>
+                        <div class="small text-muted mb-2">@b.Category?.Name</div>
+                        <div class="mb-2 fw-semibold">@b.Price.ToString("C")</div>
+
+                        <!-- Stock info and Add to Cart -->
+                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                            <span class="badge @(b.Quantity <= 5 ? "text-bg-danger" : "text-bg-secondary")">
+                                In stock: @b.Quantity
+                            </span>
+
+                            <!-- Add to cart (only if logged in as User) -->
+                            @if (User?.IsInRole("User") == true)
+                            {
+                                <form asp-controller="Cart" asp-action="Add" method="post" class="m-0 d-flex gap-2">
+                                    <input type="hidden" name="id" value="@b.Id" />
+                                    <input class="form-control form-control-sm" type="number" name="qty" value="1" min="1" style="width:80px" />
+                                    <button class="btn btn-primary btn-sm">Add</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <!-- If not logged in, redirect to login -->
+                                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-sm">Add to Cart</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<!-- Trending section-->
+@if (Model.Trending.Any())
+{
+    <div class="mb-3 d-flex align-items-center justify-content-between mt-4">
+        <h4 class="m-0">Trending Now</h4>
+        <a asp-controller="Catalog" asp-action="Index" class="btn btn-link">See all →</a>
+    </div>
+
+    <!-- Shows max 4 items -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+        @foreach (var b in Model.Trending.Take(4))
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrWhiteSpace(b.ImageUrl))
+                    {
+                        <img src="@b.ImageUrl" alt="@b.Title" class="card-img-top" style="height:180px;object-fit:cover;" />
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title mb-1">@b.Title</h6>
+                        <div class="small text-muted mb-2">@b.Category?.Name</div>
+                        <div class="mb-2 fw-semibold">@b.Price.ToString("C")</div>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center">
+
+                            <!-- Add to cart (only if logged in as User) -->
+                            @if (User?.IsInRole("User") == true)
+                            {
+                                <form asp-controller="Cart" asp-action="Add" method="post" class="m-0 d-flex gap-2">
+                                    <input type="hidden" name="id" value="@b.Id" />
+                                    <input class="form-control form-control-sm" type="number" name="qty" value="1" min="1" style="width:80px" />
+                                    <button class="btn btn-primary btn-sm">Add</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <!-- If not logged in, redirect to login -->
+                                <a asp-controller="Account"
+                                   asp-action="Login"
+                                   asp-route-returnUrl="@($"{Context.Request.Path}{Context.Request.QueryString}")"
+                                   class="btn btn-primary btn-sm">
+                                    Add to Cart
+                                </a>
+
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,8 @@
+﻿@* This makes classes from EasyGames available for each razor files without writing it each time *@
+@using EasyGames
+
+@* Same for Models where we can use classes like StockItem directly in views*@
+@using EasyGames.Models
+
+@* Enables built-in tag helpers which gives Razor views a more HTML-friendly syntax*@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
